@@ -1,0 +1,25 @@
+<td>Overall</td>
+<td>
+  {{sum}}/{{max}}</td>
+<td>
+  <style>
+  .pie {
+  /* Basic layout */
+  display: inline-block;
+  width: 3.75em;
+  height: 3.75em;
+  border-radius: 50%;
+  background-image: conic-gradient(
+      {{color}} {{mustache_deg}},      /* 20%               20  * 3.6 =  72 degrees */
+      #ff0000 {{loss}}         /* 35%       last stop is always 360 degrees */
+    );
+  /* A little styling */
+  border: .15em solid #fff;
+  box-shadow: 0 .075em .2em .05em rgba(0,0,0,.25);
+
+  /* fixes a minor clipping issue in Chrome */
+  background-origin: border-box;
+}
+</style>
+<div class="pie"></div>
+</td>
