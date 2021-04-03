@@ -1,0 +1,107 @@
+LDAP Authentication
+https://moodle.org/mod/forum/discuss.php?d=56198#258088
+LDAP server settings
+ldap_host_url: ldap://primarydomaincontroler.domain.ac.nz;ldap://secondarydomaincontroler.domain.ac.nz
+ldap_version: 3
+
+Bind settings
+ldap_preventpassindb: yes
+ldap_bind_dn: CN=user,OU=Staff,DC=domain,DC=ac,DC=nz
+ldap_bind_pw: password
+
+
+User lookup settings
+ldap_user_type: MS Active Directory
+ldap_contexts: OU=Staff,DC=domain,DC=ac,DC=nz;
+OU=Year 1 Students,OU=Students,DC=domain,DC=ac,DC=nz;
+OU=Year 2 Students,OU=Students,DC=domain,DC=ac,DC=nz;
+OU=Year 3 Students,OU=Students,DC=domain,DC=ac,DC=nz;
+OU=Degree Students,OU=Students,DC=domain,DC=ac,DC=nz;
+OU=PG Students,DC=domain,DC=ac,DC=nz;
+OU=Users,DC=domain,DC=ac,DC=nz;
+OU=Students,DC=domain,DC=ac,DC=nz
+
+Settings
+ldap_search_sub: yes
+ldap_opt_deref: no
+ldap_user_attribute: sAMAccountName
+
+
+Course creators
+ldap_creators: CN=moodle-creators,OU=Staff,DC=domain,DC=ac,DC=nz
+
+
+Data mapping
+First name: givenName
+  Update local: On Every login
+  Update external: never
+  Lock value: Locked
+Surname: sn
+  Update local: On Every login
+  Update external: never
+  Lock value: Locked
+Email address: mail
+  Update local: On Every login
+  Update external: never
+  Lock value: Locked
+Phone 1: telephoneNumber  <== probably not required?
+  Update local: On creation
+  Update external: never
+  Lock value: unlocked
+Phone 2: mobile   <== probably not required?
+  Update local: On Creation
+  Update external: never
+  Lock value: unlocked
+Address: streetAddress   <== probably not required?
+  Update local: On Creation
+  Update external: never
+  Lock value: unlocked
+Country: co   <== probably not required?
+  Update local: On Creation
+  Update external: never
+  Lock value: unlocked
+ID number: distinguishedName <== this is needed for the ldap enrollment, you need to adjust the databases table for this record from 64 characters to enough to handle the fully qualified domain name, 255 should be enough.
+  Update local: On Every login
+  Update external: never
+  Lock value: locked
+
+
+LDAP Enrollment Plugin
+
+LDAP Server Settings
+enroll_ldap_host_url: ldap://primarydomaincontroller.domain.ac.nz
+enrol_ldap_version: 3
+enrol_ldap_bind_dn: CN=user,OU=Staff,DC=domain,DC=ac,DC=nz
+ldap_bind_pw: password
+ldap_search_sub: Yes
+
+Student enrolment settings
+enrol_ldap_student_contexts: OU=EnrollmentStudents,DC=domain,DC=ac,DC=nz <== I made a new OU called 'EnrollmentStudents'
+enrol_ldap_student_memberattribute: member
+
+
+Teacher enrolment settings
+enrol_ldap_student_contexts: OU=EnrollmentLecturers,DC=domain,DC=ac,DC=nz <== I made a new OU called 'EnrollmentStaff'
+enrol_ldap_student_memberattribute: member
+
+
+Course enrolment settings
+enrol_ldap_objectclass: group
+enrol_ldap_course_idnumber: cn
+enrol_ldap_course_shortname: cn
+enrol_ldap_course_shortname: cn
+
+
+MySQL Database Adjustments
+
+Open this file /var/www/html/moodle/lib/moodlelib.php
+Change this value ‘idnumber’ => 64 (change this value of ‘64’ to ‘255’)
+
+Open up a console and type:  mysql -u root -p moodle
+
+
+You will be prompted for the 'root' password (this is the MySQL root user, not the operating system root user). If the mysql root user doesn't have a password just press ENTER. 'moodle' is the name of your Moodle database.
+
+
+Once you are in, type the following: ALTER TABLE mdl_user CHANGE COLUMN idnumber idnumber VARCHAR(255);
+(if you want to widen the idnumber field to 255 characters).
