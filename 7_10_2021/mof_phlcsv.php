@@ -225,7 +225,7 @@ th {
                         $mof->address = $area;
                         $mof->score = $a6;
                         $mof->dategranted = $ngaycapcmtnd;
-                        $mof->full_name = $full_name;
+                        $mof->full_name = $a1;
                         $mof->birthday = $ngaysinh;
                         $mof->idnumber = $cmtnd_trans;
                         $mof->iddate = $ngaycapcmtnd ;
@@ -247,7 +247,7 @@ th {
                             set idplace = N'$a5',
                             birthday = $ngaysinh,
                             iddate = $ngaycapcmtnd,
-                            full_name = N'$fullname',
+                            full_name = N'$a1',
                             idnumber = N'$cmtnd_trans'
                             where id = $mof->id";
                         $DB->execute($sql,array());}
@@ -265,8 +265,21 @@ th {
                     }
                      else
                     {
+                        $MOF_array = $DB->get_records_sql('select * from {mof_phl} where idnumber=?', array('idnumber' =>$cmtnd_trans));
+                        foreach ($MOF_array as $n) {
+                            $mofid = $n->id;
+                        }
+                        $sql = "
+                            update mdl232x0_mof_phl
+                            set idplace = N'$a5',
+                            birthday = $ngaysinh,
+                            iddate = $ngaycapcmtnd,
+                            full_name = N'$a1',
+                            idnumber = N'$cmtnd_trans'
+                            where id = $mofid";
+                        $DB->execute($sql,array());
                         echo "<tr>";
-                        echo "<td>Học viên $cmnd[$i] đã tồn tại</td>";
+                        echo "<td>Học viên $cmnd[$i] đã được cập nhật</td>";
                         echo "<td></td>";
                         echo "<td></td>";
                         echo "<td></td>";
