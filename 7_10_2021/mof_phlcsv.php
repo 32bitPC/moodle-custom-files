@@ -58,7 +58,7 @@ class phl_csv{
         $array[1] = $tmp;
         unset($tmp);
         $result = implode('/', $array);
-        
+        echo "result = ".$result."<br>";
         return $result ;
     }
     
@@ -129,241 +129,161 @@ class phl_csv{
             $arrage_date = substr($arrage_date, strpos($arrage_date, ": ") + 1);
             $arrage_date = trim($arrage_date," "); // ngay thi
             $idnumber_arrange = $columns[1][1];
-            $whatIWant = substr($idnumber_arrange, strpos($idnumber_arrange, ": ") + 1);
-            $whatIWant = trim($whatIWant," "); // ma ky thi
+            $testcode = substr($idnumber_arrange, strpos($idnumber_arrange, ": ") + 1);
+            $testcode = trim($testcode," "); // ma ky thi
             $check_testcode_exists = $DB->get_records_sql('select * from {mof_phl} where testcode=?', array('testcode' =>$whatIWant));
             foreach ($check_testcode_exists as $mytestcode) {
                 $check_testcode_exist = $mytestcode->testcode;
             }
-            $i = 4;
-            if(is_null($check_testcode_exist))
-            {
-                echo "
-<style>
-.bubble{
-   position:relative;
-   padding: 10px;
-   background: #FFCB41;
-}
-                    
-.bubble:after{
-   position:absolute;
-   content: '';
-   top:15px;right:-10px;
-   border-width: 10px 0 10px 15px;
-   border-color: transparent  #FFCB41;
-   border-style: solid;
- }â€‹
-</style>
-<p><span class='bubble'>Äiá»ƒm há»c viÃªn Ä‘Ã£ Ä‘Æ°á»£c thÃªm má»›i</span>&nbsp;&nbsp;&nbsp;&#128513</p>
-";
-                echo "
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-                    
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-                    
-tr:nth-child(even) {
-  background-color: #D9D9D9;
-}
-th {
-  background-color: #EDAC00;
-}
-</style>
-";
-                echo "<table>
-  <tr>
-    <th style='color:white;'>Há» vÃ  tÃªn</th>
-<th style='color:white;'>NgÃ y/ThÃ¡ng/NÄƒm sinh</th>
-<th style='color:white;'>CMTND</th>
-<th style='color:white;'>NgÃ y cáº¥p</th>
-<th style='color:white;'>NÆ¡i cáº¥p</th>
-<th style='color:white;'>Äiá»ƒm</th>
-<th style='color:white;'>KÃ½ tÃªn</th>
-<th style='color:white;'>Ghi chÃº</th>
-  </tr>
-  ";
-                do {
-                    echo "<tr>";
-                    
-                    $a1 = $columns[$i][1]; // ho va ten
-                    $a2 = $columns[$i][2]; // ngay sinh
-                    $a3 = $columns[$i][3]; // so cmtnd
-                    $a4 = $columns[$i][4]; // ngay cap
-                    $a5 = $columns[$i][5]; // noi cap
-                    $a6 = $columns[$i][8]; // diem
-                    
-                    $t1 = strtotime(switch_date_month($columns[$i][2]));
-                    $t2 = strtotime(switch_date_month($columns[$i][4]));
-                    $t3 = strtotime(switch_date_month($arrage_date));
-                    $array_username_sql = "
-        select firstname,lastname from mdl232x0_user where firstname + ' '  + lastname = N'$a1'
-        and username = N'$a3'
-";
-                    echo $array_username_sql."<br>";
-                    $users = $DB->get_records_sql($array_username_sql,array());
-                    foreach($users as $user){
-                        $uname1= $user->firstname;
-                        $uname2= $user->lastname;
-                        $fullname = $uname1.' '.$uname2;
-                    }
-                    echo $fullname."<br>";
-                    $mof->testcode = $whatIWant;
-                    $mof->datetest = $t3;
-                    
-                    $mof->address = $area;
-                    //$mof->idplace = $a5;
-                    $mof->dategranted = $t2;
-                    // update
-                    //
-                    if(empty($a6)){
-                        $a6 = 0;
-                    }
-                    $mof->score = $a6;
-                    $mof->id = $DB->insert_record('mof_phl', $mof);
-                    $sql = "update mdl232x0_mof_phl
-                    set 
-                    full_name =  N'$fullname',
-                    birthday = $t1,
-                    iddate = $t2,
-                    idplace = N'$a5',
-                    idnumber = N'$a3'
-                    where id = $mof->id";
-                    $DB->execute($sql,array());
-                    echo "<td>$a1</td>";
-                    echo "<td>$a2</td>";
-                    echo "<td>$a3</td>";
-                    echo "<td>$a4</td>";
-                    echo "<td>$a5</td>";
-                    echo "<td>$a6</td>";
-                    echo "<td></td>";
-                    echo "<td></td>";
-                    $i++;
-                    if($columns[$i][0] == '')
-                    {
-                        break;
-                    }
-                    echo "</tr>";
-                } while (foo);
-            }
-            else{
-                echo "
-<style>
-.bubble{
-   position:relative;
-   padding: 10px;
-   background: #FFCB41;
-}
-                    
-.bubble:after{
-   position:absolute;
-   content: '';
-   top:15px;right:-10px;
-   border-width: 10px 0 10px 15px;
-   border-color: transparent  #FFCB41;
-   border-style: solid;
- }â€‹
-</style>
-<p><span class='bubble'>Äiá»ƒm Ä‘Ã£ Ä‘Æ°á»£c cáº­p nháº­t</span>&nbsp;&nbsp;&nbsp;&#128513</p>
-";
-                echo "
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-                    
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-                    
-tr:nth-child(even) {
-  background-color: #D9D9D9;
-}
-th {
-  background-color: #EDAC00;
-}
-</style>
-";
-                echo "<table>
-  <tr>
-    <th style='color:white;'>Há» vÃ  tÃªn</th>
-<th style='color:white;'>NgÃ y/ThÃ¡ng/NÄƒm sinh</th>
-<th style='color:white;'>CMTND</th>
-<th style='color:white;'>NgÃ y cáº¥p</th>
-<th style='color:white;'>NÆ¡i cáº¥p</th>
-<th style='color:white;'>Äiá»ƒm</th>
-<th style='color:white;'>KÃ½ tÃªn</th>
-<th style='color:white;'>Ghi chÃº</th>
-  </tr>
-  ";
-                do {
-                    echo "<tr>";
-                    $a1 = $columns[$i][1];
-                    $a2 = $columns[$i][2];
-                    $a3 = $columns[$i][3];
-                    $a4 = $columns[$i][4];
-                    $a5 = $columns[$i][5];
-                    $a6 = $columns[$i][8];
-                    $t1 = strtotime(switch_date_month($columns[$i][2]));
-                    $t2 = strtotime(switch_date_month($columns[$i][4]));
-                    $t3 = strtotime(switch_date_month($arrange_date));
-                    if(empty($a6)){
-                        $a6 = 0;
-                    }
-                    $array_username_sql = "
-        select firstname,lastname,id from mdl232x0_user where firstname + ' '  + lastname = N'$a1'
-        and username = N'$a3'
-";
-                    $users = $DB->get_records_sql($array_username_sql,array());
-                    foreach($users as $user){
-                        $uname1= $user->firstname;
-                        $uname2= $user->lastname;
-                        $userid = $user->id;
-                    }
-                    $sql = "update mdl232x0_mof_phl
-                    set
-                    
-                    datetest = $t2,
-                    address = N'$area',
-                    dategranted = $t3,
-                    
-                    granting_location = N'$a5',
-                    
-                    
-                    score = $a6
-                    where testcode = N'$whatIWant'
-                    and userid = $userid
-";
-                    $DB->execute($sql,array());
-                    echo "<td>$a1</td>";
-                    echo "<td>$a2</td>";
-                    echo "<td>$a3</td>";
-                    echo "<td>$a4</td>";
-                    echo "<td>$a5</td>";
-                    echo "<td>$a6</td>";
-                    echo "<td></td>";
-                    echo "<td></td>";
-                    $i++;
-                    if($columns[$i][0] == '')
-                    {
-                        break;
-                    }
-                    echo "</tr>";
-                } while (foo);
-            }
             
+            $i = 4;
+            echo "
+<style>
+.bubble{
+   position:relative;
+   padding: 10px;
+   background: #FFCB41;
+}
+                
+.bubble:after{
+   position:absolute;
+   content: '';
+   top:15px;right:-10px;
+   border-width: 10px 0 10px 15px;
+   border-color: transparent  #FFCB41;
+   border-style: solid;
+ }â€‹
+</style>
+<p><span class='bubble'>Điểm MOF đã được thêm mới</span></p>
+";
+            echo "
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+                
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+                
+tr:nth-child(even) {
+  background-color: #D9D9D9;
+}
+th {
+  background-color: #EDAC00;
+}
+</style>
+";
+            echo "<table>
+  <tr>
+    <th style='color:white;'>Họ & Tên</th>
+<th style='color:white;'>Ngày / Tháng / Năm</th>
+<th style='color:white;'>CMTND</th>
+<th style='color:white;'>Ngày cấp</th>
+<th style='color:white;'>Nơi cấp</th>
+<th style='color:white;'>Điểm</th>
+<th style='color:white;'>Ký tên</th>
+<th style='color:white;'>Ghi chú</th>
+  </tr>
+  ";
+            do{
+                //echo "<tr>";
+                $a1 = $columns[$i][1];
+                $a2 = $columns[$i][2];
+                $a3 = $columns[$i][3];
+                $a4 = $columns[$i][4];
+                $a5 = $columns[$i][5];
+                $a6 = $columns[$i][8];
+                $ngaysinh = strtotime(switch_date_month($columns[$i][2]));
+                $ngaycapcmtnd = strtotime(switch_date_month($columns[$i][4]));
+                $ngaythi = strtotime(switch_date_month($arrage_date));
+                if(empty($a6)){
+                    $a6 = 0;
+                }
+                $cmtnd_trans = $columns[$i][3]; 
+                $check_cmtnd = $DB->get_records_sql('select * from {mof_phl} where idnumber=?', array('idnumber' =>$cmtnd_trans));
+                foreach ($check_cmtnd as $x) {
+                    $cmnd[$i] = $x->idnumber;
+                }
+                $user_array = $DB->get_records_sql('select * from {user} where username=?', array('username' =>$cmtnd_trans));
+                foreach ($user_array as $u) {
+                    $a_man_firstname = $u->firstname;
+                    $a_man_lastname = $u->lastname;
+                    $fullname = $a_man_firstname." ".$a_man_lastname;
+                }                             
+                if(empty($cmnd[$i]))
+                    {
+                        echo "<tr>";
+                        //echo "User not exist. Adding process.<br>";
+                        //echo "Ngay sinh : ".date("d/m/Y", $ngaysinh)."<br>";
+                        $mof->datetest = $ngaythi;
+                        $mof->testcode = $testcode;
+                        $mof->address = $area;
+                        $mof->score = $a6;
+                        $mof->dategranted = $ngaycapcmtnd;
+                        $mof->full_name = $full_name;
+                        $mof->birthday = $ngaysinh;
+                        $mof->idnumber = $cmtnd_trans;
+                        $mof->iddate = $ngaycapcmtnd ;
+                        $mof->idplace = $a5;
+                        $mof->note = '';
+                        $mof->id = $DB->insert_record("mof_phl",$mof);
+                        $check_item_array = $DB->get_records_sql('select * from {mof_phl} where id=?', array('id' =>$mof->id));
+                        foreach ($check_item_array as $item) {
+                            $idplace = $item->idplace;
+                            $birthday = $item->birthday;
+                            $iddate = $item->iddate;
+                            $full_name = $item->full_name;
+                            $idnumber = $item->idnumber;
+                        }
+                        if(empty($idplace)||empty($birthday)||empty($iddate)
+                            ||empty($full_name)||empty($idnumber)){
+                        $sql = "
+                            update mdl232x0_mof_phl
+                            set idplace = N'$a5',
+                            birthday = $ngaysinh,
+                            iddate = $ngaycapcmtnd,
+                            full_name = N'$fullname',
+                            idnumber = N'$cmtnd_trans'
+                            where id = $mof->id";
+                        $DB->execute($sql,array());}
+                        $ngaysinh = date("d/m/Y", $ngaysinh);
+                        $ngaycapcmtnd = date("d/m/Y",$ngaycapcmtnd);
+                        echo "<td>$fullname</td>";
+                        echo "<td>$ngaysinh</td>";
+                        echo "<td>$cmtnd_trans</td>";
+                        echo "<td>$ngaycapcmtnd</td>";
+                        echo "<td>$a5</td>";
+                        echo "<td>$a6</td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "</tr>";
+                    }
+                     else
+                    {
+                        echo "<tr>";
+                        echo "<td>Học viên $cmnd[$i] đã tồn tại</td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "</tr>";
+                    //echo "User exists. Ignored.<br>";
+                    }  
+                    $i++;
+                    if ($columns[$i+1][1] == ''){
+                        break;
+                    }
+                    
+            }
+            while(foo);
             echo "
 </table>
 <br>
@@ -395,6 +315,7 @@ th {
 #mform1{ display : none;}
 </style>";
             echo "<form style='display:inline-block; width:45%;text-align:center;' action='mof_upload.php'><button class='button button1'>Back</button></form>";
+           
             for($i=1;$i<count($columns);$i++) {
                 
                 
