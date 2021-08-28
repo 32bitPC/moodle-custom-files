@@ -1039,7 +1039,7 @@ if ($formdata = $mform2->is_cancelled()) {
                 continue;
             }
             $shortname = $user->{'course'.$i};
-            if($is_online!=1)
+            if($is_online!=1 && !(is_null($cohort1)) && !(is_null($course3)))
             {
                 $shortname = 'KhÃ´ng enrol vÃ o khÃ³a há»c do lá»›p offline | '.$is_online.'
 <br>Existing user : '.$existinguser->id. '<br>Sequence : '.$sequence. '<br>New : '.$usersnew.'<br>Updated : '.$usersupdated;
