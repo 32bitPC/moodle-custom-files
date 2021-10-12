@@ -1,0 +1,8 @@
+- removed has_capability
+- removed cohort_get_invisible_contexts_manager 
+if project goes south, paste :
+if ($excludedcontexts = cohort_get_invisible_contexts_manager()) {
+        list($excludedsql, $excludedparams) = $DB->get_in_or_equal($excludedcontexts, SQL_PARAMS_NAMED, 'excl', false);
+        $wheresql = ' AND c.contextid '.$excludedsql;
+        $params = array_merge($params, $excludedparams);
+    }
